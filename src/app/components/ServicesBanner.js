@@ -5,16 +5,12 @@ import { useRouter } from "next/navigation";
 
 // 1. Create an array of service objects with their names and links
 const ALL_SERVICES_DATA = [
-  { name: "IKEA Assembly", link: "/services/ikea-services" },
-  { name: "TV Mounting", link: "/services/handyman/tv-mounting" },
-  { name: "Furniture Assembly", link: "/services/handyman/furniture-assembly" },
-  { name: "General Mounting", link: "/services/handyman/general-mounting" },
-  { name: "Truck Assisted Help Moving", link: "/services/moving-services/truck-assisted" },
-  { name: "Help Moving", link: "/services/featured-tasks/help-moving" },
-  { name: "Cleaning", link: "/services/cleaning" },
-  { name: "Door, Cabinet, & Furniture Repair", link: "/services/featured-tasks" },
-  { name: "Heavy Lifting & Loading", link: "/services/heavy-lifting" },
-  { name: "Electrical help", link: "/services/handyman/electrical" },
+  { name: "App Development", link: "/services/DIGITAL-DEVELOPMENT/app-development" },
+  { name: "Brand Development", link: "/services/DIGITAL-DEVELOPMENT/brand-development" },
+  { name: "Graphic Design", link:"/services/DIGITAL-DEVELOPMENT/graphic-design" },
+  { name: "Logo Development", link: "/services/DIGITAL-DEVELOPMENT/logo-development" },
+  { name: "Online Store Development",   link: "/services/DIGITAL-DEVELOPMENT/online-store-development" },
+ 
 ];
 
 export default function ServicesBanner() {

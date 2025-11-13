@@ -66,9 +66,9 @@ export default function Navbar() {
                   Market yourself
                 </Link>
                 
-                 <Link href="/admin-panel" className={btnPrimary}>
+                 {/* <Link href="/admin-panel" className={btnPrimary}>
                   Admin Panel
-                </Link>
+                </Link> */}
               </>
               
             )}

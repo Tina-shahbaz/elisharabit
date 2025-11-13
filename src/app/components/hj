@@ -1,396 +1,396 @@
-// \"use client";
-import Link from "next/link";
+# // \"use client";
+# import Link from "next/link";
   
-const servicesData = [
-  {
-    title: "Featured Tasks",
-    href: "/services/featured-tasks",
-    description: "Let Taskers help tackle your to-do list.",
-    links: [
-      { name: "Furniture Assembly", href: "/services/furniture-assembly" },
-      { name: "Home Repairs", href: "/services/home-repairs" },
-      { name: "Help Moving", href: "/services/help-moving" },
-      { name: "Heavy Lifting", href: "/services/heavy-lifting" },
-      { name: "Home Cleaning", href: "/services/home-cleaning" },
-      { name: "Spring Cleaning", href: "/services/spring-cleaning" },
-      { name: "Personal Assistant", href: "/services/personal-assistant" },
-      { name: "Hanging Art, Mirror & Decor", href: "/services/hanging-art" },
-      { name: "Yard Work Services", href: "/services/yard-work" },
-      { name: "Wait in Line", href: "/services/wait-in-line" },
-      { name: "Closet Organization Service", href: "/services/closet-organization" },
-    ],
-  },
-  {
-    title: "Handyman",
-    href: "/services/handyman",
-    description: "Hire a Tasker for help around the house",
-    links: [
-      { name: "Door, Cabinet, & Furniture Repair", href: "/services/door-repair" },
-      { name: "Appliance Installation & Repairs", href: "/services/appliance-repair" },
-      { name: "Furniture Assembly", href: "/services/furniture-assembly" },
-      { name: "TV Mounting", href: "/services/tv-mounting" },
-      { name: "Drywall Repair Service", href: "/services/drywall-repair" },
-      { name: "Flooring & Tiling Help", href: "/services/flooring-tiling" },
-      { name: "Electrical Help", href: "/services/electrical" },
-      { name: "Sealing & Caulking", href: "/services/sealing" },
-      { name: "Plumbing", href: "/services/plumbing" },
-      { name: "Window & Blinds Repair", href: "/services/window-blinds-repair" },
-      { name: "Ceiling Fan Installation", href: "/services/ceiling-fan-installation" },
-      { name: "Smart Home Installation", href: "/services/smart-home-installation" },
-      { name: "Heavy Lifting", href: "/services/heavy-lifting" },
-      { name: "Install Air Conditioner", href: "/services/air-conditioner-installation" },
-      { name: "Painting", href: "/services/painting" },
-      { name: "Install Shelves, Rods & Hooks", href: "/services/install-shelves" },
-      { name: "Home Maintenance", href: "/services/home-maintenance" },
-      { name: "Install Blinds & Window Treatments", href: "/services/install-blinds" },
-      { name: "Home Repairs", href: "/services/home-repairs" },
-      { name: "Baby Proofing", href: "/services/baby-proofing" },
-      { name: "Yard Work Services", href: "/services/yard-work" },
-      { name: "Light Installation", href: "/services/light-installation" },
-      { name: "Carpentry Services", href: "/services/carpentry" },
-      { name: "Hang Art, Mirror & Decor", href: "/services/hanging-art" },
-      { name: "General Mounting", href: "/services/general-mounting" },
-      { name: "Cabinet Installation", href: "/services/cabinet-installation" },
-      { name: "Wallpapering Service", href: "/services/wallpapering" },
-      { name: "Fence Installation & Repair Services", href: "/services/fence-repair" },
-      { name: "Deck Restoration Services", href: "/services/deck-restoration" },
-      { name: "Doorbell Installation", href: "/services/doorbell-installation" },
-      { name: "Home Theater Installing", href: "/services/home-theater-installing" },
-    ],
-  },
-  {
-    title: "Moving Services",
-    href: "/services/moving-services",
-    description: "From the heavy lifting to unpacking and organizing make your move easy.",
-    links: [
-      { name: "Help Moving", href: "/services/help-moving" },
-      { name: "Truck Assisted Help Moving", href: "/services/truck-assisted" },
-      { name: "Packing Services & Help", href: "/services/packing" },
-      { name: "Unpacking Services", href: "/services/unpacking" },
-      { name: "Heavy Lifting", href: "/services/heavy-lifting" },
-      { name: "Local Movers", href: "/services/local-movers" },
-      { name: "Junk Pickup", href: "/services/junk-pickup" },
-      { name: "Furniture Movers", href: "/services/furniture-movers" },
-      { name: "One Item Movers", href: "/services/one-item-movers" },
-      { name: "Storage Unit Moving", href: "/services/storage-unit-moving" },
-      { name: "Couch Removal", href: "/services/couch-removal" },
-      { name: "Mattress Pick-Up & Removal", href: "/services/mattress-removal" },
-      { name: "Furniture Removal", href: "/services/furniture-removal" },
-      { name: "Pool Table Movers", href: "/services/pool-table-movers" },
-      { name: "Appliance Removal", href: "/services/appliance-removal" },
-      { name: "Heavy Furniture Moving", href: "/services/heavy-furniture-moving" },
-      { name: "Rearranging Furniture", href: "/services/rearranging-furniture" },
-      { name: "Full Service Help Moving", href: "/services/full-service-moving" },
-      { name: "In-Home Furniture Movers", href: "/services/in-home-furniture-movers" },
-    ],
-  },
+# const servicesData = [
+#   {
+#     title: "Featured Tasks",
+#     href: "/services/featured-tasks",
+#     description: "Let Taskers help tackle your to-do list.",
+#     links: [
+#       { name: "Furniture Assembly", href: "/services/furniture-assembly" },
+#       { name: "Home Repairs", href: "/services/home-repairs" },
+#       { name: "Help Moving", href: "/services/help-moving" },
+#       { name: "Heavy Lifting", href: "/services/heavy-lifting" },
+#       { name: "Home Cleaning", href: "/services/home-cleaning" },
+#       { name: "Spring Cleaning", href: "/services/spring-cleaning" },
+#       { name: "Personal Assistant", href: "/services/personal-assistant" },
+#       { name: "Hanging Art, Mirror & Decor", href: "/services/hanging-art" },
+#       { name: "Yard Work Services", href: "/services/yard-work" },
+#       { name: "Wait in Line", href: "/services/wait-in-line" },
+#       { name: "Closet Organization Service", href: "/services/closet-organization" },
+#     ],
+#   },
+#   {
+#     title: "Handyman",
+#     href: "/services/handyman",
+#     description: "Hire a Tasker for help around the house",
+#     links: [
+#       { name: "Door, Cabinet, & Furniture Repair", href: "/services/door-repair" },
+#       { name: "Appliance Installation & Repairs", href: "/services/appliance-repair" },
+#       { name: "Furniture Assembly", href: "/services/furniture-assembly" },
+#       { name: "TV Mounting", href: "/services/tv-mounting" },
+#       { name: "Drywall Repair Service", href: "/services/drywall-repair" },
+#       { name: "Flooring & Tiling Help", href: "/services/flooring-tiling" },
+#       { name: "Electrical Help", href: "/services/electrical" },
+#       { name: "Sealing & Caulking", href: "/services/sealing" },
+#       { name: "Plumbing", href: "/services/plumbing" },
+#       { name: "Window & Blinds Repair", href: "/services/window-blinds-repair" },
+#       { name: "Ceiling Fan Installation", href: "/services/ceiling-fan-installation" },
+#       { name: "Smart Home Installation", href: "/services/smart-home-installation" },
+#       { name: "Heavy Lifting", href: "/services/heavy-lifting" },
+#       { name: "Install Air Conditioner", href: "/services/air-conditioner-installation" },
+#       { name: "Painting", href: "/services/painting" },
+#       { name: "Install Shelves, Rods & Hooks", href: "/services/install-shelves" },
+#       { name: "Home Maintenance", href: "/services/home-maintenance" },
+#       { name: "Install Blinds & Window Treatments", href: "/services/install-blinds" },
+#       { name: "Home Repairs", href: "/services/home-repairs" },
+#       { name: "Baby Proofing", href: "/services/baby-proofing" },
+#       { name: "Yard Work Services", href: "/services/yard-work" },
+#       { name: "Light Installation", href: "/services/light-installation" },
+#       { name: "Carpentry Services", href: "/services/carpentry" },
+#       { name: "Hang Art, Mirror & Decor", href: "/services/hanging-art" },
+#       { name: "General Mounting", href: "/services/general-mounting" },
+#       { name: "Cabinet Installation", href: "/services/cabinet-installation" },
+#       { name: "Wallpapering Service", href: "/services/wallpapering" },
+#       { name: "Fence Installation & Repair Services", href: "/services/fence-repair" },
+#       { name: "Deck Restoration Services", href: "/services/deck-restoration" },
+#       { name: "Doorbell Installation", href: "/services/doorbell-installation" },
+#       { name: "Home Theater Installing", href: "/services/home-theater-installing" },
+#     ],
+#   },
+#   {
+#     title: "Moving Services",
+#     href: "/services/moving-services",
+#     description: "From the heavy lifting to unpacking and organizing make your move easy.",
+#     links: [
+#       { name: "Help Moving", href: "/services/help-moving" },
+#       { name: "Truck Assisted Help Moving", href: "/services/truck-assisted" },
+#       { name: "Packing Services & Help", href: "/services/packing" },
+#       { name: "Unpacking Services", href: "/services/unpacking" },
+#       { name: "Heavy Lifting", href: "/services/heavy-lifting" },
+#       { name: "Local Movers", href: "/services/local-movers" },
+#       { name: "Junk Pickup", href: "/services/junk-pickup" },
+#       { name: "Furniture Movers", href: "/services/furniture-movers" },
+#       { name: "One Item Movers", href: "/services/one-item-movers" },
+#       { name: "Storage Unit Moving", href: "/services/storage-unit-moving" },
+#       { name: "Couch Removal", href: "/services/couch-removal" },
+#       { name: "Mattress Pick-Up & Removal", href: "/services/mattress-removal" },
+#       { name: "Furniture Removal", href: "/services/furniture-removal" },
+#       { name: "Pool Table Movers", href: "/services/pool-table-movers" },
+#       { name: "Appliance Removal", href: "/services/appliance-removal" },
+#       { name: "Heavy Furniture Moving", href: "/services/heavy-furniture-moving" },
+#       { name: "Rearranging Furniture", href: "/services/rearranging-furniture" },
+#       { name: "Full Service Help Moving", href: "/services/full-service-moving" },
+#       { name: "In-Home Furniture Movers", href: "/services/in-home-furniture-movers" },
+#     ],
+#   },
 
-  // ✅ New Card 1: Furniture Assembly
-  {
-    title: "Furniture Assembly",
-    href: "/services/furniture-assembly",
-    description: "Get your furniture assembled quickly and easily.",
-    links: [
-      { name: "Furniture Assembly", href: "/services/furniture-assembly" },
-      { name: "Patio Furniture Assembly", href: "/services/patio-furniture-assembly" },
-      { name: "Desk Assembly", href: "/services/desk-assembly" },
-      { name: "Dresser Assembly", href: "/services/dresser-assembly" },
-      { name: "Bed Assembly", href: "/services/bed-assembly" },
-      { name: "Bookshelf Assembly", href: "/services/bookshelf-assembly" },
-      { name: "Couch Assembly", href: "/services/couch-assembly" },
-      { name: "Chair Assembly", href: "/services/chair-assembly" },
-      { name: "Wardrobe Assembly", href: "/services/wardrobe-assembly" },
-      { name: "Table Assembly", href: "/services/table-assembly" },
-      { name: "Disassemble Furniture", href: "/services/disassemble-furniture" },
-    ],
-  },
+#   // ✅ New Card 1: Furniture Assembly
+#   {
+#     title: "Furniture Assembly",
+#     href: "/services/furniture-assembly",
+#     description: "Get your furniture assembled quickly and easily.",
+#     links: [
+#       { name: "Furniture Assembly", href: "/services/furniture-assembly" },
+#       { name: "Patio Furniture Assembly", href: "/services/patio-furniture-assembly" },
+#       { name: "Desk Assembly", href: "/services/desk-assembly" },
+#       { name: "Dresser Assembly", href: "/services/dresser-assembly" },
+#       { name: "Bed Assembly", href: "/services/bed-assembly" },
+#       { name: "Bookshelf Assembly", href: "/services/bookshelf-assembly" },
+#       { name: "Couch Assembly", href: "/services/couch-assembly" },
+#       { name: "Chair Assembly", href: "/services/chair-assembly" },
+#       { name: "Wardrobe Assembly", href: "/services/wardrobe-assembly" },
+#       { name: "Table Assembly", href: "/services/table-assembly" },
+#       { name: "Disassemble Furniture", href: "/services/disassemble-furniture" },
+#     ],
+#   },
 
-  // ✅ New Card 2: Mounting & Installation
-  {
-    title: "Mounting & Installation",
-    href: "/services/mounting-installation",
-    description: "Expert help for mounting and installations.",
-    links: [
-      { name: "Wall Mounting", href: "/services/wall-mounting" },
-      { name: "TV Mounting", href: "/services/tv-mounting" },
-      { name: "Install Shelves, Rods & Hooks", href: "/services/install-shelves" },
-      { name: "Ceiling Fan Installation", href: "/services/ceiling-fan-installation" },
-      { name: "Install Blinds & Window Treatments", href: "/services/install-blinds" },
-      { name: "Hang Art, Mirror & Decor", href: "/services/hanging-art" },
-      { name: "General Mounting", href: "/services/general-mounting" },
-      { name: "Hang Christmas Lights", href: "/services/hang-christmas-lights" },
-    ],
-  },
-
-
-  {
-    title: "Cleaning",
-    href: "/services/cleaning",
-    description: "Taskers will make your home sparkle!",
-    links: [
-      { name: "House Cleaning Services", href: "/services/house-cleaning" },
-      { name: "Deep Cleaning", href: "/services/deep-cleaning" },
-      { name: "Disinfecting Services", href: "/services/disinfecting" },
-      { name: "Move In Cleaning", href: "/services/move-in-cleaning" },
-      { name: "Move Out Cleaning", href: "/services/move-out-cleaning" },
-      { name: "Vacation Rental Cleaning", href: "/services/vacation-rental-cleaning" },
-      { name: "Carpet Cleaning Service", href: "/services/carpet-cleaning" },
-      { name: "Garage Cleaning", href: "/services/garage-cleaning" },
-      { name: "One Time Cleaning Services", href: "/services/one-time-cleaning" },
-      { name: "Car Washing", href: "/services/car-washing" },
-      { name: "Laundry Help", href: "/services/laundry" },
-      { name: "Pressure Washing", href: "/services/pressure-washing" },
-      { name: "Spring Cleaning", href: "/services/spring-cleaning" },
-    ],
-  },
-
-  {
-    title: "Shopping + Delievery",
-    href: "/services/cleaning",
-    description: "Taskers will make your home sparkle!",
-    links: [
-       { name: "Delivery Service", href: "/services/delivery-service" },
-  { name: "Grocery Shopping & Delivery", href: "/services/grocery-shopping-delivery" },
-  { name: "Running Your Errands", href: "/services/running-your-errands" },
-  { name: "Christmas Tree Delivery", href: "/services/christmas-tree-delivery" },
-  { name: "Wait in Line", href: "/services/wait-in-line" },
-  { name: "Deliver Big Piece of Furniture", href: "/services/deliver-big-furniture" },
-  { name: "Drop Off Donations", href: "/services/drop-off-donations" },
-  { name: "Contactless Delivery", href: "/services/contactless-delivery" },
-  { name: "Pet Food Delivery", href: "/services/pet-food-delivery" },
-  { name: "Baby Food Delivery", href: "/services/baby-food-delivery" },
-  { name: "Return Items", href: "/services/return-items" },
-  { name: "Wait for Delivery", href: "/services/wait-for-delivery" },
-  { name: "Shipping", href: "/services/shipping" },
-  { name: "Breakfast Delivery", href: "/services/breakfast-delivery" },
-  { name: "Coffee Delivery", href: "/services/coffee-delivery" },
-    ],
-  },
-
-  {
-    title: "Ikea Services",
-    href: "/services/cleaning",
-    description: "Taskers will make your home sparkle!",
-    links: [
-  { name: "Light Installation", href: "/services/light-installation" },
-  { name: "Furniture Removal", href: "/services/furniture-removal" },
-  { name: "Smart Home Installation", href: "/services/smart-home-installation" },
-  { name: "Organization", href: "/services/organization" },
-  { name: "Furniture Assembly", href: "/services/furniture-assembly" },
-  { name: "General Mounting", href: "/services/general-mounting" },
-
-    ],
-  }, 
-  // Card #9
-   {
-    title: "Yardwork",
-    href: "/services/cleaning",
-    description: "Taskers will make your home sparkle!",
-    links: [
-  { name: "Gardening Services", href: "/services/gardening-services" },
-  { name: "Weed Removal", href: "/services/weed-removal" },
-  { name: "Lawn Care Services", href: "/services/lawn-care-services" },
-  { name: "Lawn Mowing Services", href: "/services/lawn-mowing-services" },
-  { name: "Landscaping Services", href: "/services/landscaping-services" },
-  { name: "Gutter Cleaning", href: "/services/gutter-cleaning" },
-  { name: "Tree Trimming Service", href: "/services/tree-trimming" },
-  { name: "Vacation Plant Watering", href: "/services/vacation-plant-watering" },
-  { name: "Patio Cleaning", href: "/services/patio-cleaning" },
-  { name: "Hot Tub Cleaning", href: "/services/hot-tub-cleaning" },
-  { name: "Fence Installation & Repair Services", href: "/services/fence-installation-repair" },
-  { name: "Deck Restoration Services", href: "/services/deck-restoration" },
-  { name: "Patio Furniture Assembly", href: "/services/patio-furniture-assembly" },
-  { name: "Fence Staining", href: "/services/fence-staining" },
-  { name: "Mulching Services", href: "/services/mulching" },
-  { name: "Lawn Fertilizer Service", href: "/services/lawn-fertilizer" },
-  { name: "Hedge Trimming Service", href: "/services/hedge-trimming" },
-  { name: "Outdoor Party Setup", href: "/services/outdoor-party-setup" },
-  { name: "Urban Gardening Service", href: "/services/urban-gardening" },
-  { name: "Leaf Raking & Removal", href: "/services/leaf-raking-removal" },
-  { name: "Produce Gardening", href: "/services/produce-gardening" },
-  { name: "Hose Installation", href: "/services/hose-installation" },
-  { name: "Shed Maintenance", href: "/services/shed-maintenance" },
-  { name: "Pressure Washing", href: "/services/pressure-washing" },
-    ],
-  },
-  {
-  title: "Holidays",
-  href: "/services/holidays",
-  description: "Get help with holiday preparations, decorations, and more!",
-  links: [
-    { name: "Holiday Help", href: "/services/holiday-help" },
-    { name: "Gift Wrapping Services", href: "/services/gift-wrapping" },
-    { name: "Hang Christmas Lights", href: "/services/christmas-lights" },
-    { name: "Christmas Tree Delivery", href: "/services/christmas-tree-delivery" },
-    { name: "Holiday Decorating", href: "/services/holiday-decorating" },
-    { name: "Party Cleaning", href: "/services/party-cleaning" },
-    { name: "Toy Assembly Service", href: "/services/toy-assembly" },
-    { name: "Wait in Line", href: "/services/wait-in-line" },
-    { name: "Christmas Tree Removal", href: "/services/christmas-tree-removal" },
-  ],
-},
-
-{
-  title: "Winter Tasks",
-  href: "/services/winter-tasks",
-  description: "Stay warm and safe with seasonal winter task services.",
-  links: [
-    { name: "Snow Removal", href: "/services/snow-removal" },
-    { name: "Sidewalk Salting", href: "/services/sidewalk-salting" },
-    { name: "Window Winterization", href: "/services/window-winterization" },
-    { name: "Residential Snow Removal", href: "/services/residential-snow-removal" },
-    { name: "Christmas Tree Removal", href: "/services/christmas-tree-removal" },
-    { name: "AC Winterization", href: "/services/ac-winterization" },
-    { name: "Winter Yardwork", href: "/services/winter-yardwork" },
-    { name: "Pipe Insulation", href: "/services/pipe-insulation" },
-    { name: "Storm Door Installation", href: "/services/storm-door-installation" },
-    { name: "Winter Deck Maintenance", href: "/services/winter-deck-maintenance" },
-    { name: "Water Heater Maintenance", href: "/services/water-heater-maintenance" },
-    { name: "Wait in Line", href: "/services/wait-in-line" },
-  ],
-},
-
-{
-  title: "Personal Assistant",
-  href: "/services/personal-assistant",
-  description: "Hire a Tasker as your personal assistant — hourly or ongoing support!",
-  links: [
-    { name: "Personal Assistant", href: "/services/personal-assistant" },
-    { name: "Running Your Errands", href: "/services/running-errands" },
-    { name: "Wait in Line", href: "/services/wait-in-line" },
-    { name: "Organization", href: "/services/organization" },
-    { name: "Organize Home", href: "/services/organize-home" },
-    { name: "Closet Organization Service", href: "/services/closet-organization" },
-    { name: "Interior Design Service", href: "/services/interior-design" },
-    { name: "Virtual Assistant", href: "/services/virtual-assistant" },
-  ],
-},
-
-{
-  title: "Baby Prep",
-  href: "/services/baby-prep",
-  description: "Prepare your home for your little one with baby-friendly services.",
-  links: [
-    { name: "Baby Proofing", href: "/services/baby-proofing" },
-    { name: "Baby Food Delivery", href: "/services/baby-food-delivery" },
-    { name: "Organize a Room", href: "/services/organize-room" },
-    { name: "Painting", href: "/services/painting" },
-    { name: "Toy Assembly Service", href: "/services/toy-assembly" },
-    { name: "Smart Home Installation", href: "/services/smart-home-installation" },
-    { name: "Shopping", href: "/services/shopping" },
-    { name: "General Cleaning", href: "/services/general-cleaning" },
-  ],
-},
-{
-  title: "Virtual & Online Tasks",
-  href: "/services/virtual-online-tasks",
-  description: "Virtual assistance, organization, research, & more",
-  links: [
-    { name: "Virtual Assistant", href: "/services/virtual-assistant" },
-    { name: "Organization", href: "/services/organization" },
-    { name: "Data Entry", href: "/services/data-entry" },
-    { name: "Computer Help", href: "/services/computer-help" },
-  ],
-},
-{
-  title: "Office Services",
-  href: "/services/office-services",
-  description: "Hire a Tasker to help around the office!",
-  links: [
-    { name: "Office Cleaning", href: "/services/office-cleaning" },
-    { name: "Office Tech Setup", href: "/services/office-tech-setup" },
-    { name: "Office Movers", href: "/services/office-movers" },
-    { name: "Office Supply & Snack Delivery", href: "/services/office-supply-snack-delivery" },
-    { name: "Office Furniture Assembly", href: "/services/office-furniture-assembly" },
-    { name: "Office Setup & Organization", href: "/services/office-setup-organization" },
-    { name: "Office Administration", href: "/services/office-administration" },
-    { name: "Office Interior Design", href: "/services/office-interior-design" },
-    { name: "Moving Office Furniture", href: "/services/moving-office-furniture" },
-    { name: "Office Mounting Service", href: "/services/office-mounting" },
-  ],
-},
-{
-  title: "Contactless Tasks",
-  href: "/services/contactless-tasks",
-  description: "No-contact delivery, shopping, errands",
-  links: [
-    { name: "Contactless Delivery", href: "/services/contactless-delivery" },
-    { name: "Contactless Prescription Pick-up & Delivery", href: "/services/contactless-prescription" },
-    { name: "Running Your Errands", href: "/services/running-errands" },
-    { name: "Grocery Shopping & Delivery", href: "/services/grocery-shopping-delivery" },
-    { name: "Disinfecting Services", href: "/services/disinfecting-services" },
-    { name: "Drop Off Donations", href: "/services/drop-off-donations" },
-    { name: "Yard Work Services", href: "/services/yard-work-services" },
-    { name: "Virtual Assistant", href: "/services/virtual-assistant" },
-  ],
-},
+#   // ✅ New Card 2: Mounting & Installation
+#   {
+#     title: "Mounting & Installation",
+#     href: "/services/mounting-installation",
+#     description: "Expert help for mounting and installations.",
+#     links: [
+#       { name: "Wall Mounting", href: "/services/wall-mounting" },
+#       { name: "TV Mounting", href: "/services/tv-mounting" },
+#       { name: "Install Shelves, Rods & Hooks", href: "/services/install-shelves" },
+#       { name: "Ceiling Fan Installation", href: "/services/ceiling-fan-installation" },
+#       { name: "Install Blinds & Window Treatments", href: "/services/install-blinds" },
+#       { name: "Hang Art, Mirror & Decor", href: "/services/hanging-art" },
+#       { name: "General Mounting", href: "/services/general-mounting" },
+#       { name: "Hang Christmas Lights", href: "/services/hang-christmas-lights" },
+#     ],
+#   },
 
 
-];
+#   {
+#     title: "Cleaning",
+#     href: "/services/cleaning",
+#     description: "Taskers will make your home sparkle!",
+#     links: [
+#       { name: "House Cleaning Services", href: "/services/house-cleaning" },
+#       { name: "Deep Cleaning", href: "/services/deep-cleaning" },
+#       { name: "Disinfecting Services", href: "/services/disinfecting" },
+#       { name: "Move In Cleaning", href: "/services/move-in-cleaning" },
+#       { name: "Move Out Cleaning", href: "/services/move-out-cleaning" },
+#       { name: "Vacation Rental Cleaning", href: "/services/vacation-rental-cleaning" },
+#       { name: "Carpet Cleaning Service", href: "/services/carpet-cleaning" },
+#       { name: "Garage Cleaning", href: "/services/garage-cleaning" },
+#       { name: "One Time Cleaning Services", href: "/services/one-time-cleaning" },
+#       { name: "Car Washing", href: "/services/car-washing" },
+#       { name: "Laundry Help", href: "/services/laundry" },
+#       { name: "Pressure Washing", href: "/services/pressure-washing" },
+#       { name: "Spring Cleaning", href: "/services/spring-cleaning" },
+#     ],
+#   },
 
-const ServicesCategories = () => {
-  return (
-    <>
-    <section className="w-full bg-white py-16 px-6 md:px-12">
-      <h2 className="text-2xl md:text-3xl font-bold text-center mb-12">
-        Hire a trusted Tasker presto.
-      </h2>
+#   {
+#     title: "Shopping + Delievery",
+#     href: "/services/cleaning",
+#     description: "Taskers will make your home sparkle!",
+#     links: [
+#        { name: "Delivery Service", href: "/services/delivery-service" },
+#   { name: "Grocery Shopping & Delivery", href: "/services/grocery-shopping-delivery" },
+#   { name: "Running Your Errands", href: "/services/running-your-errands" },
+#   { name: "Christmas Tree Delivery", href: "/services/christmas-tree-delivery" },
+#   { name: "Wait in Line", href: "/services/wait-in-line" },
+#   { name: "Deliver Big Piece of Furniture", href: "/services/deliver-big-furniture" },
+#   { name: "Drop Off Donations", href: "/services/drop-off-donations" },
+#   { name: "Contactless Delivery", href: "/services/contactless-delivery" },
+#   { name: "Pet Food Delivery", href: "/services/pet-food-delivery" },
+#   { name: "Baby Food Delivery", href: "/services/baby-food-delivery" },
+#   { name: "Return Items", href: "/services/return-items" },
+#   { name: "Wait for Delivery", href: "/services/wait-for-delivery" },
+#   { name: "Shipping", href: "/services/shipping" },
+#   { name: "Breakfast Delivery", href: "/services/breakfast-delivery" },
+#   { name: "Coffee Delivery", href: "/services/coffee-delivery" },
+#     ],
+#   },
 
-      {/* Grid of categories */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {servicesData.map((service, index) => (
-          <div key={index} className="border rounded-lg shadow-sm p-4 bg-white">
-            <img
-              src="/Assembly.webp"
-              alt={service.title}
-              className="w-full h-40 object-cover rounded-md mb-4 shadow-md hover:shadow-none transition duration-300"
-            />
+#   {
+#     title: "Ikea Services",
+#     href: "/services/cleaning",
+#     description: "Taskers will make your home sparkle!",
+#     links: [
+#   { name: "Light Installation", href: "/services/light-installation" },
+#   { name: "Furniture Removal", href: "/services/furniture-removal" },
+#   { name: "Smart Home Installation", href: "/services/smart-home-installation" },
+#   { name: "Organization", href: "/services/organization" },
+#   { name: "Furniture Assembly", href: "/services/furniture-assembly" },
+#   { name: "General Mounting", href: "/services/general-mounting" },
 
-            <Link href={service.href}>
-              <h3 className="text-lg font-semibold text-gray-800 hover:text-yellow-600 transition">
-                {service.title}
-              </h3>
-            </Link>
+#     ],
+#   }, 
+#   // Card #9
+#    {
+#     title: "Yardwork",
+#     href: "/services/cleaning",
+#     description: "Taskers will make your home sparkle!",
+#     links: [
+#   { name: "Gardening Services", href: "/services/gardening-services" },
+#   { name: "Weed Removal", href: "/services/weed-removal" },
+#   { name: "Lawn Care Services", href: "/services/lawn-care-services" },
+#   { name: "Lawn Mowing Services", href: "/services/lawn-mowing-services" },
+#   { name: "Landscaping Services", href: "/services/landscaping-services" },
+#   { name: "Gutter Cleaning", href: "/services/gutter-cleaning" },
+#   { name: "Tree Trimming Service", href: "/services/tree-trimming" },
+#   { name: "Vacation Plant Watering", href: "/services/vacation-plant-watering" },
+#   { name: "Patio Cleaning", href: "/services/patio-cleaning" },
+#   { name: "Hot Tub Cleaning", href: "/services/hot-tub-cleaning" },
+#   { name: "Fence Installation & Repair Services", href: "/services/fence-installation-repair" },
+#   { name: "Deck Restoration Services", href: "/services/deck-restoration" },
+#   { name: "Patio Furniture Assembly", href: "/services/patio-furniture-assembly" },
+#   { name: "Fence Staining", href: "/services/fence-staining" },
+#   { name: "Mulching Services", href: "/services/mulching" },
+#   { name: "Lawn Fertilizer Service", href: "/services/lawn-fertilizer" },
+#   { name: "Hedge Trimming Service", href: "/services/hedge-trimming" },
+#   { name: "Outdoor Party Setup", href: "/services/outdoor-party-setup" },
+#   { name: "Urban Gardening Service", href: "/services/urban-gardening" },
+#   { name: "Leaf Raking & Removal", href: "/services/leaf-raking-removal" },
+#   { name: "Produce Gardening", href: "/services/produce-gardening" },
+#   { name: "Hose Installation", href: "/services/hose-installation" },
+#   { name: "Shed Maintenance", href: "/services/shed-maintenance" },
+#   { name: "Pressure Washing", href: "/services/pressure-washing" },
+#     ],
+#   },
+#   {
+#   title: "Holidays",
+#   href: "/services/holidays",
+#   description: "Get help with holiday preparations, decorations, and more!",
+#   links: [
+#     { name: "Holiday Help", href: "/services/holiday-help" },
+#     { name: "Gift Wrapping Services", href: "/services/gift-wrapping" },
+#     { name: "Hang Christmas Lights", href: "/services/christmas-lights" },
+#     { name: "Christmas Tree Delivery", href: "/services/christmas-tree-delivery" },
+#     { name: "Holiday Decorating", href: "/services/holiday-decorating" },
+#     { name: "Party Cleaning", href: "/services/party-cleaning" },
+#     { name: "Toy Assembly Service", href: "/services/toy-assembly" },
+#     { name: "Wait in Line", href: "/services/wait-in-line" },
+#     { name: "Christmas Tree Removal", href: "/services/christmas-tree-removal" },
+#   ],
+# },
 
-            <p className="text-sm text-gray-600 mb-4">{service.description}</p>
+# {
+#   title: "Winter Tasks",
+#   href: "/services/winter-tasks",
+#   description: "Stay warm and safe with seasonal winter task services.",
+#   links: [
+#     { name: "Snow Removal", href: "/services/snow-removal" },
+#     { name: "Sidewalk Salting", href: "/services/sidewalk-salting" },
+#     { name: "Window Winterization", href: "/services/window-winterization" },
+#     { name: "Residential Snow Removal", href: "/services/residential-snow-removal" },
+#     { name: "Christmas Tree Removal", href: "/services/christmas-tree-removal" },
+#     { name: "AC Winterization", href: "/services/ac-winterization" },
+#     { name: "Winter Yardwork", href: "/services/winter-yardwork" },
+#     { name: "Pipe Insulation", href: "/services/pipe-insulation" },
+#     { name: "Storm Door Installation", href: "/services/storm-door-installation" },
+#     { name: "Winter Deck Maintenance", href: "/services/winter-deck-maintenance" },
+#     { name: "Water Heater Maintenance", href: "/services/water-heater-maintenance" },
+#     { name: "Wait in Line", href: "/services/wait-in-line" },
+#   ],
+# },
 
-            <ul className="space-y-1">
-              {service.links.map((link, i) => (
-                <li key={i}>
-                  <Link
-                    href={link.href}
-                    className="text-gray-700 text-sm hover:text-yellow-600 transition duration-200 no-underline"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
-    </section>
-    <div className="mt-2 grid md:grid-cols-2 gap-0">
-      {/* Left Review */}
-      <div className="bg-white  rounded-2xl flex-col items-center flex justify-center p-10">
-        <h3 className="text-2xl font-bold text-gray-800 mb-10">BRIT+CO</h3>
-        <p className="text-gray-600 text-lg text-center italic">
-          “Taskrabbit is arguably the best thing to come out of the modern-day tech
-          revolution. Hiring a Tasker can really help make every facet of your life a breeze.”
-        </p>
-      </div>
+# {
+#   title: "Personal Assistant",
+#   href: "/services/personal-assistant",
+#   description: "Hire a Tasker as your personal assistant — hourly or ongoing support!",
+#   links: [
+#     { name: "Personal Assistant", href: "/services/personal-assistant" },
+#     { name: "Running Your Errands", href: "/services/running-errands" },
+#     { name: "Wait in Line", href: "/services/wait-in-line" },
+#     { name: "Organization", href: "/services/organization" },
+#     { name: "Organize Home", href: "/services/organize-home" },
+#     { name: "Closet Organization Service", href: "/services/closet-organization" },
+#     { name: "Interior Design Service", href: "/services/interior-design" },
+#     { name: "Virtual Assistant", href: "/services/virtual-assistant" },
+#   ],
+# },
 
-      {/* Right Review */}
-      <div className="bg-white  rounded-2xl flex-col items-center flex justify-center p-10">
-        <h3 className="text-2xl font-bold text-gray-800 mb-10">The New York Times</h3>
-        <p className="text-gray-600 text-lg text-center italic">
-          “Taskrabbit, a company known for, among other things, sending tool-wielding
-          workers to rescue customers befuddled by build-it-yourself furniture kits.”
-        </p>
-      </div>
-    </div>
-    </>
-  );
-};
+# {
+#   title: "Baby Prep",
+#   href: "/services/baby-prep",
+#   description: "Prepare your home for your little one with baby-friendly services.",
+#   links: [
+#     { name: "Baby Proofing", href: "/services/baby-proofing" },
+#     { name: "Baby Food Delivery", href: "/services/baby-food-delivery" },
+#     { name: "Organize a Room", href: "/services/organize-room" },
+#     { name: "Painting", href: "/services/painting" },
+#     { name: "Toy Assembly Service", href: "/services/toy-assembly" },
+#     { name: "Smart Home Installation", href: "/services/smart-home-installation" },
+#     { name: "Shopping", href: "/services/shopping" },
+#     { name: "General Cleaning", href: "/services/general-cleaning" },
+#   ],
+# },
+# {
+#   title: "Virtual & Online Tasks",
+#   href: "/services/virtual-online-tasks",
+#   description: "Virtual assistance, organization, research, & more",
+#   links: [
+#     { name: "Virtual Assistant", href: "/services/virtual-assistant" },
+#     { name: "Organization", href: "/services/organization" },
+#     { name: "Data Entry", href: "/services/data-entry" },
+#     { name: "Computer Help", href: "/services/computer-help" },
+#   ],
+# },
+# {
+#   title: "Office Services",
+#   href: "/services/office-services",
+#   description: "Hire a Tasker to help around the office!",
+#   links: [
+#     { name: "Office Cleaning", href: "/services/office-cleaning" },
+#     { name: "Office Tech Setup", href: "/services/office-tech-setup" },
+#     { name: "Office Movers", href: "/services/office-movers" },
+#     { name: "Office Supply & Snack Delivery", href: "/services/office-supply-snack-delivery" },
+#     { name: "Office Furniture Assembly", href: "/services/office-furniture-assembly" },
+#     { name: "Office Setup & Organization", href: "/services/office-setup-organization" },
+#     { name: "Office Administration", href: "/services/office-administration" },
+#     { name: "Office Interior Design", href: "/services/office-interior-design" },
+#     { name: "Moving Office Furniture", href: "/services/moving-office-furniture" },
+#     { name: "Office Mounting Service", href: "/services/office-mounting" },
+#   ],
+# },
+# {
+#   title: "Contactless Tasks",
+#   href: "/services/contactless-tasks",
+#   description: "No-contact delivery, shopping, errands",
+#   links: [
+#     { name: "Contactless Delivery", href: "/services/contactless-delivery" },
+#     { name: "Contactless Prescription Pick-up & Delivery", href: "/services/contactless-prescription" },
+#     { name: "Running Your Errands", href: "/services/running-errands" },
+#     { name: "Grocery Shopping & Delivery", href: "/services/grocery-shopping-delivery" },
+#     { name: "Disinfecting Services", href: "/services/disinfecting-services" },
+#     { name: "Drop Off Donations", href: "/services/drop-off-donations" },
+#     { name: "Yard Work Services", href: "/services/yard-work-services" },
+#     { name: "Virtual Assistant", href: "/services/virtual-assistant" },
+#   ],
+# },
 
-export default ServicesCategories;
+
+# ];
+
+# const ServicesCategories = () => {
+#   return (
+#     <>
+#     <section className="w-full bg-white py-16 px-6 md:px-12">
+#       <h2 className="text-2xl md:text-3xl font-bold text-center mb-12">
+#         Hire a trusted Tasker presto.
+#       </h2>
+
+#       {/* Grid of categories */}
+#       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+#         {servicesData.map((service, index) => (
+#           <div key={index} className="border rounded-lg shadow-sm p-4 bg-white">
+#             <img
+#               src="/Assembly.webp"
+#               alt={service.title}
+#               className="w-full h-40 object-cover rounded-md mb-4 shadow-md hover:shadow-none transition duration-300"
+#             />
+
+#             <Link href={service.href}>
+#               <h3 className="text-lg font-semibold text-gray-800 hover:text-yellow-600 transition">
+#                 {service.title}
+#               </h3>
+#             </Link>
+
+#             <p className="text-sm text-gray-600 mb-4">{service.description}</p>
+
+#             <ul className="space-y-1">
+#               {service.links.map((link, i) => (
+#                 <li key={i}>
+#                   <Link
+#                     href={link.href}
+#                     className="text-gray-700 text-sm hover:text-yellow-600 transition duration-200 no-underline"
+#                   >
+#                     {link.name}
+#                   </Link>
+#                 </li>
+#               ))}
+#             </ul>
+#           </div>
+#         ))}
+#       </div>
+#     </section>
+#     <div className="mt-2 grid md:grid-cols-2 gap-0">
+#       {/* Left Review */}
+#       <div className="bg-white  rounded-2xl flex-col items-center flex justify-center p-10">
+#         <h3 className="text-2xl font-bold text-gray-800 mb-10">BRIT+CO</h3>
+#         <p className="text-gray-600 text-lg text-center italic">
+#           “Taskrabbit is arguably the best thing to come out of the modern-day tech
+#           revolution. Hiring a Tasker can really help make every facet of your life a breeze.”
+#         </p>
+#       </div>
+
+#       {/* Right Review */}
+#       <div className="bg-white  rounded-2xl flex-col items-center flex justify-center p-10">
+#         <h3 className="text-2xl font-bold text-gray-800 mb-10">The New York Times</h3>
+#         <p className="text-gray-600 text-lg text-center italic">
+#           “Taskrabbit, a company known for, among other things, sending tool-wielding
+#           workers to rescue customers befuddled by build-it-yourself furniture kits.”
+#         </p>
+#       </div>
+#     </div>
+#     </>
+#   );
+# };
+
+# export default ServicesCategories;
