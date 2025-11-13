@@ -1,6 +1,103 @@
 "use client";
 import { useParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
+
+// =================================================================
+// 🗺️ GOOGLE PLACES AUTOCOMPLETE COMPONENT
+// =================================================================
+function AutocompleteInput({ value, onChange, placeholder, className }) {
+  const inputRef = useRef(null);
+  const autocompleteRef = useRef(null);
+
+  useEffect(() => {
+    const initializeAutocomplete = async () => {
+      try {
+        // Load Google Places script
+        if (!window.google) {
+          const script = document.createElement('script');
+          script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_API_KEY}&libraries=places`;
+          script.async = true;
+          script.defer = true;
+          document.head.appendChild(script);
+          
+          // Wait for script to load
+          await new Promise((resolve, reject) => {
+            script.onload = resolve;
+            script.onerror = reject;
+          });
+        }
+
+        if (inputRef.current && window.google) {
+          // Initialize Autocomplete
+          autocompleteRef.current = new window.google.maps.places.Autocomplete(
+            inputRef.current,
+            {
+              types: ['address'],
+              componentRestrictions: { country: 'us' },
+              fields: ['formatted_address', 'address_components', 'geometry']
+            }
+          );
+
+          // Add place changed listener
+          autocompleteRef.current.addListener('place_changed', () => {
+            const place = autocompleteRef.current.getPlace();
+            
+            if (place && place.formatted_address) {
+              const address = place.formatted_address;
+              
+              // Extract street number and route (street name)
+              let streetNumber = '';
+              let route = '';
+              
+              place.address_components.forEach(component => {
+                if (component.types.includes('street_number')) {
+                  streetNumber = component.long_name;
+                }
+                if (component.types.includes('route')) {
+                  route = component.long_name;
+                }
+              });
+
+              const fullStreet = streetNumber && route ? `${streetNumber} ${route}` : address;
+              
+              // Call parent onChange with the full address
+              onChange(fullStreet);
+              
+              console.log('Selected Place:', {
+                fullAddress: address,
+                streetAddress: fullStreet,
+                components: place.address_components,
+                location: place.geometry?.location
+              });
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Error loading Google Places:', error);
+      }
+    };
+
+    initializeAutocomplete();
+
+    // Cleanup
+    return () => {
+      if (autocompleteRef.current) {
+        window.google.maps.event.clearInstanceListeners(autocompleteRef.current);
+      }
+    };
+  }, []);
+
+  return (
+    <input
+      ref={inputRef}
+      type="text"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      className={className}
+    />
+  );
+}
 
 // =================================================================
 // 🪟 BOOKING POPUP (Modal for Date, Time, Payment)
@@ -92,18 +189,13 @@ function BookingPopup({ tasker, onClose }) {
 }
 
 // =================================================================
-// 💰 TASKER CARD COMPONENT (UPDATED DESIGN WITH SIDE PROFILE PICTURE)
+// 💰 TASKER CARD COMPONENT
 // =================================================================
-
 function TaskerCard({ u, onSelect }) {
-  // 💰 Hourly Rate (Default to a placeholder if not available)
   const hourlyRate = u.hourlyRate || 45.00; 
-
-  // ⭐ Rating & Reviews (Default to placeholders if not available/zero)
   const ratingValue = u.rating || 5.0; 
   const reviewCount = u.reviewsCount || 2; 
 
-  // Task statistics (placeholder data)
   const taskStats = {
     primaryTasks: 1263,
     primaryTaskType: "Furniture Assembly",
@@ -111,7 +203,6 @@ function TaskerCard({ u, onSelect }) {
     overallTaskType: "Assembly"
   };
 
-  // Sample review data
   const sampleReview = {
     clientName: "pamela s.",
     date: "Fri, Oct 17",
@@ -135,19 +226,16 @@ function TaskerCard({ u, onSelect }) {
           {/* HEADER: Name, Rating, Price */}
           <div className="flex justify-between items-start mb-4">
             <div className="flex-1">
-              {/* Name in larger, bolder format */}
               <h1 className="text-2xl font-bold text-black mb-2">
                 {(u.firstName || "") + " " + (u.lastName || "")}.
               </h1>
               
-              {/* ⭐ Star Rating with review count */}
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-yellow-500 text-lg">✰</span>
                 <span className="text-black font-bold text-lg">{ratingValue.toFixed(1)}</span>
                 <span className="text-gray-600">({reviewCount} reviews)</span>
               </div>
 
-              {/* Task Statistics */}
               <div className="text-gray-600 text-sm mb-4">
                 <span className="font-semibold">©{taskStats.primaryTasks} {taskStats.primaryTaskType} tasks</span>
                 <br />
@@ -155,7 +243,6 @@ function TaskerCard({ u, onSelect }) {
               </div>
             </div>
 
-            {/* 💰 Hourly Rate - Larger and more prominent */}
             <div className="text-2xl font-bold text-black text-right">
               ${hourlyRate.toFixed(2)}/hr
             </div>
@@ -215,19 +302,16 @@ function TaskerCard({ u, onSelect }) {
             <div className="mb-6">
               <h3 className="font-semibold text-black mb-2">Availability:</h3>
               <div className="flex flex-wrap gap-2">
-                {/* Start Work */}
                 <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm border border-blue-200">
                   Starts: {u.availabilityTiming.startWork === 'in_one_week' ? 'In 1 Week' : u.availabilityTiming.startWork}
                 </span>
                 
-                {/* Preferred Times */}
                 {u.availabilityTiming.preferredTime?.map((time, index) => (
                   <span key={index} className="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm border border-green-200 capitalize">
                     {time}
                   </span>
                 ))}
                 
-                {/* Available Days (show first 3) */}
                 {u.availabilityTiming.availableDays?.slice(0, 3).map((day, index) => (
                   <span key={index} className="px-3 py-1 rounded-full bg-purple-100 text-purple-700 text-sm border border-purple-200 capitalize">
                     {day.slice(0, 3)}
@@ -247,14 +331,12 @@ function TaskerCard({ u, onSelect }) {
           {/* FOOTER: Verification, Actions */}
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-4">
-              {/* Verification Status */}
               {u.isVerified && (
                 <span className="text-xs px-3 py-1 rounded-full bg-green-100 text-green-700 border border-green-200 font-semibold">
                   Verified
                 </span>
               )}
               
-              {/* View Profile Link - Opens profile page */}
               <button 
                 onClick={() => window.open(`/profile/${u._id || u.id}`, '_blank')}
                 className="text-blue-600 hover:text-blue-800 text-sm font-semibold underline"
@@ -283,7 +365,7 @@ function TaskerCard({ u, onSelect }) {
 }
 
 // =================================================================
-// 🎛️ FILTERS SIDEBAR COMPONENT (UPDATED WITH AVAILABILITY FILTERS)
+// 🎛️ FILTERS SIDEBAR COMPONENT
 // =================================================================
 function FiltersSidebar({ serviceName, taskerCount, filters, onFilterChange }) {
   const timeSlots = [
@@ -381,7 +463,7 @@ function FiltersSidebar({ serviceName, taskerCount, filters, onFilterChange }) {
 
       <hr className="my-3 border-gray-200" />
 
-      {/* PRICE FILTER (Existing) */}
+      {/* PRICE FILTER */}
       <h3 className="font-semibold text-black mb-2">Price</h3>
       <div className="mb-1">
         <div className="flex items-center justify-between text-xs text-gray-600">
@@ -398,7 +480,7 @@ function FiltersSidebar({ serviceName, taskerCount, filters, onFilterChange }) {
 
       <hr className="my-3 border-gray-200" />
 
-      {/* TASKER TYPE FILTER (Existing) */}
+      {/* TASKER TYPE FILTER */}
       <h3 className="font-semibold text-black mb-2">Tasker type</h3>
       <label className="flex items-center gap-2 text-sm cursor-pointer">
         <input type="checkbox" className="cursor-pointer" />
@@ -428,28 +510,23 @@ function FiltersSidebar({ serviceName, taskerCount, filters, onFilterChange }) {
 }
 
 // =================================================================
-// 🛒 BOOK NOW PAGE COMPONENT (MAIN COMPONENT - UPDATED)
+// 🛒 BOOK NOW PAGE COMPONENT (MAIN COMPONENT)
 // =================================================================
 
 export default function BookNow() {
   const { slug } = useParams();
   const slugArray = Array.isArray(slug) ? slug : slug ? [slug] : [];
   
-  // ✅ Service name extract karein URL se (improved logic)
   const getServiceName = () => {
     if (slugArray.length === 0) return "General Service";
     
-    // Handle different URL patterns
     const lastSegment = slugArray[slugArray.length - 1];
     
     if (lastSegment === "book" && slugArray.length >= 2) {
-      // Pattern: /services/main/sub/book
       return decodeURIComponent(slugArray[slugArray.length - 2].replace(/-/g, " "));
     } else if (lastSegment.endsWith("-book")) {
-      // Pattern: /services/moving-book
       return decodeURIComponent(lastSegment.replace("-book", "").replace(/-/g, " "));
     } else {
-      // Default pattern
       return decodeURIComponent(lastSegment.replace(/-/g, " "));
     }
   };
@@ -466,7 +543,6 @@ export default function BookNow() {
     details: "",
   });
 
-  // NEW: Availability Filters State
   const [filters, setFilters] = useState({
     startWork: "",
     preferredTime: [],
@@ -475,7 +551,6 @@ export default function BookNow() {
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  // Filter Change Handler
   const handleFilterChange = (filterType, value) => {
     if (filterType === 'clear') {
       setFilters({
@@ -504,7 +579,6 @@ export default function BookNow() {
       try {
         setLoading(true);
         setError("");
-        // API call to fetch users
         const res = await fetch("/api/users", { cache: "no-store" });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
@@ -522,48 +596,40 @@ export default function BookNow() {
   const visibleUsers = useMemo(() => {
     const list = usersData?.users || [];
     
-    // Agar koi specific service nahi hai toh sare taskers dikhao
     if (serviceName === "General Service" || serviceName === "Service") {
       return list;
     }
     
-    // Service-based filtering
     let filtered = list.filter(tasker => {
       if (!tasker.skills || tasker.skills.length === 0) return false;
       
-      // Check if tasker has the selected service in their skills
       const hasService = tasker.skills.some(skill => {
         const skillName = typeof skill === 'string' ? skill.toLowerCase() : skill.name?.toLowerCase();
         const currentService = serviceName.toLowerCase();
         
-        // Multiple matching strategies
         return (
-          skillName === currentService || // Exact match
-          skillName.includes(currentService) || // Partial match
-          currentService.includes(skillName) || // Reverse partial match
-          skillName.replace(/\s+/g, '') === currentService.replace(/\s+/g, '') // Without spaces match
+          skillName === currentService ||
+          skillName.includes(currentService) ||
+          currentService.includes(skillName) ||
+          skillName.replace(/\s+/g, '') === currentService.replace(/\s+/g, '')
         );
       });
       
       return hasService;
     });
 
-    // 🔥 NEW: Availability Timing Filters Apply Karein
     if (filters.startWork || filters.preferredTime.length > 0 || filters.availableDays.length > 0) {
       filtered = filtered.filter(tasker => {
         const availability = tasker.availabilityTiming;
         
-        // Agar tasker ke paas availability data nahi hai, toh filter out karein
         if (!availability) return false;
 
         let matches = true;
 
-        // Start Work Filter
         if (filters.startWork && availability.startWork !== filters.startWork) {
           matches = false;
         }
 
-        // Preferred Time Filter
         if (filters.preferredTime.length > 0) {
           const hasMatchingTime = filters.preferredTime.some(time => 
             availability.preferredTime?.includes(time)
@@ -571,7 +637,6 @@ export default function BookNow() {
           if (!hasMatchingTime) matches = false;
         }
 
-        // Available Days Filter
         if (filters.availableDays.length > 0) {
           const hasMatchingDay = filters.availableDays.some(day => 
             availability.availableDays?.includes(day)
@@ -587,7 +652,6 @@ export default function BookNow() {
     return filtered;
   }, [usersData, serviceName, filters]);
 
-  // --- Main Render ---
   return (
     <div className="w-full px-6 md:px-16 bg-white rounded-lg pt-8">
       {/* ✅ Service Header Added */}
@@ -631,28 +695,44 @@ export default function BookNow() {
 
             {step === 1 && (
               <>
-                <input
-                  type="text"
-                  name="location"
-                  value={form.location}
-                  onChange={handleChange}
-                  placeholder="Street address"
-                  className="w-full border rounded-full px-4 py-3 mb-3 text-black"
-                  required
-                />
-                <input
-                  type="text"
-                  name="unit"
-                  value={form.unit}
-                  onChange={handleChange}
-                  placeholder="Unit or apt #"
-                  className="w-full border rounded-full px-4 py-3 text-black"
-                />
+                {/* Location Input with Google Places Autocomplete */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Street Address *
+                  </label>
+                  <AutocompleteInput
+                    value={form.location}
+                    onChange={(value) => setForm(prev => ({ ...prev, location: value }))}
+                    placeholder="Start typing your address..."
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3 text-black focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+
+                {/* Unit Input (Manual) */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Unit or Apartment Number
+                  </label>
+                  <input
+                    type="text"
+                    name="unit"
+                    value={form.unit}
+                    onChange={handleChange}
+                    placeholder="Unit, Apt #, Suite, etc."
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3 text-black focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+
                 <div className="flex justify-center mt-4">
                   <button
                     type="button"
                     onClick={() => form.location && setStep(2)}
-                    className="bg-black text-white py-2 px-6 rounded-full hover:bg-gray-800 transition"
+                    disabled={!form.location}
+                    className={`py-2 px-6 rounded-full transition ${
+                      !form.location
+                        ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                        : "bg-black text-white hover:bg-gray-800"
+                    }`}
                   >
                     Continue
                   </button>

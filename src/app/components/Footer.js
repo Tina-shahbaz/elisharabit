@@ -2,16 +2,15 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
 
 /* ====== DATA ====== */
 const discover = [
   ["Become a Tasker", "/become-a-tasker"],
-  ["Services By City", "/services/cities"],
-  ["Services Nearby", "/nearby"],
+  ["Services By City", "/services-cities"],
+  ["Services Nearby", "/services"],
   ["All Services", "/services"],
   ["Elite Taskers", "/elite-taskers"],
-  ["Help", "/help"],
+  // ["Help", "/help"],
 ];
 
 const company = [
@@ -40,7 +39,6 @@ function Social({ href, label, children }) {
   );
 }
 
-/** Inline, brand-safe store badges (no external images required) */
 function StoreBadge({ type = "apple", href = "/apps" }) {
   const isApple = type === "apple";
   return (
@@ -50,7 +48,6 @@ function StoreBadge({ type = "apple", href = "/apps" }) {
       aria-label={isApple ? "Download on the App Store" : "Get it on Google Play"}
     >
       {isApple ? (
-        /* Apple logo */
         <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" className="shrink-0">
           <path
             fill="currentColor"
@@ -58,7 +55,6 @@ function StoreBadge({ type = "apple", href = "/apps" }) {
           />
         </svg>
       ) : (
-        /* Google play triangle */
         <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" className="shrink-0">
           <path fill="currentColor" d="M3 2.6v18.8c0 .5.6.8 1 .5l10.5-9.4c.3-.3.3-.7 0-1L4 2.1c-.4-.4-1-.1-1 .5z" />
           <path fill="#34A853" d="M20.8 13.2c.4-.2.4-.8 0-1l-2.3-1.3-2 2 2 2 2.3-1.7z" />
@@ -81,33 +77,25 @@ function StoreBadge({ type = "apple", href = "/apps" }) {
 /* ====== MAIN FOOTER ====== */
 export default function Footer() {
   const year = new Date().getFullYear();
-  const [logoOk, setLogoOk] = useState(true);
 
   return (
-   <footer className="bg-black text-white w-full">
-
+    <footer className="bg-black text-white w-full">
       {/* Top: logo + socials */}
       <div className="mx-auto max-w-screen-xl px-4 md:px-6 lg:px-8 pt-10">
         <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/20 pb-5">
           <div className="flex items-center gap-3">
-            {logoOk ? (
-              <Image
-                src="/new-logo.png"
-                alt="TaskerCA"
-                width={250}
-                height={50}
-                className="rounded-md  p-1"
-                onError={() => setLogoOk(false)}
-                priority
-              />
-            ) : (
-              <div className="grid h-9 w-9 place-items-center rounded-md bg-white/10 text-white font-bold">
-                T
-              </div>
-            )}
-            
+            {/* ✅ Your custom logo/photo from /public */}
+            <Image
+              src="/newlogo.png"  // 👈 replace with your actual file name
+              alt="My Logo"
+              width={150}
+              height={60}
+              className="rounded-md object-contain p-1"
+              priority
+            />
           </div>
 
+          {/* Social icons */}
           <div className="flex flex-wrap items-center gap-2 text-sm opacity-90">
             <span className="mr-1">Follow us! We&apos;re friendly:</span>
             <Social href="https://facebook.com" label="Facebook">
@@ -118,13 +106,11 @@ export default function Footer() {
                 />
               </svg>
             </Social>
-            <span className="mx-1 hidden sm:inline-block h-5 w-px bg-white/40" />
-            <Social href="https://x.com" label="X / Twitter">
+            <Social href="https://x.com" label="Twitter / X">
               <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
                 <path fill="currentColor" d="M20.9 2.5 12.9 13l6.9 8.5h-2.8L11.7 14l-5 7.5H3.5l6.6-9.9L3.1 2.5h2.8l6 7.8 5.2-7.8h3.8z" />
               </svg>
             </Social>
-            <span className="mx-1 hidden sm:inline-block h-5 w-px bg-white/40" />
             <Social href="https://instagram.com" label="Instagram">
               <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
                 <path
@@ -133,16 +119,20 @@ export default function Footer() {
                 />
               </svg>
             </Social>
-            <span className="mx-1 hidden sm:inline-block h-5 w-px bg-white/40" />
             <Social href="https://tiktok.com" label="TikTok">
               <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-                <path fill="currentColor" d="M15 3c1.1 2.2 2.8 3.7 5 4v3c-2.2 0-3.9-.8-5-2v6.7c0 3.8-2.7 6.3-6 6.3S3 18.5 3 15.4 5.7 9 9 9c.7 0 1.5.1 2 .3V12c-.5-.2-1.1-.3-1.7-.3-1.9 0-3.3 1.3-3.3 3.5s1.4 3.5 3.3 3.5 3.4-1.2 3.4-3.3V3h2.3z" />
+                <path
+                  fill="currentColor"
+                  d="M15 3c1.1 2.2 2.8 3.7 5 4v3c-2.2 0-3.9-.8-5-2v6.7c0 3.8-2.7 6.3-6 6.3S3 18.5 3 15.4 5.7 9 9 9c.7 0 1.5.1 2 .3V12c-.5-.2-1.1-.3-1.7-.3-1.9 0-3.3 1.3-3.3 3.5s1.4 3.5 3.3 3.5 3.4-1.2 3.4-3.3V3h2.3z"
+                />
               </svg>
             </Social>
-            <span className="mx-1 hidden sm:inline-block h-5 w-px bg-white/40" />
             <Social href="https://linkedin.com" label="LinkedIn">
               <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-                <path fill="currentColor" d="M4.98 3.5A2.5 2.5 0 1 1 5 8.5a2.5 2.5 0 0 1-.02-5zM3 9h4v12H3zM14.5 9c-2.2 0-3.5 1.2-4.1 2.3V9H6.5v12H10v-6.3c0-1.7.9-2.7 2.3-2.7 1.3 0 2 .9 2 .7V21h3.5v-7c0-3.7-2-5-3.3-5z" />
+                <path
+                  fill="currentColor"
+                  d="M4.98 3.5A2.5 2.5 0 1 1 5 8.5a2.5 2.5 0 0 1-.02-5zM3 9h4v12H3zM14.5 9c-2.2 0-3.5 1.2-4.1 2.3V9H6.5v12H10v-6.3c0-1.7.9-2.7 2.3-2.7 1.3 0 2 .9 2 .7V21h3.5v-7c0-3.7-2-5-3.3-5z"
+                />
               </svg>
             </Social>
           </div>
