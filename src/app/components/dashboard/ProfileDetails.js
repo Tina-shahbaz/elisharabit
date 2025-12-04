@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import {
   Edit,
   Save,
@@ -13,13 +13,17 @@ import {
   Calendar,
   Clock,
   Watch,
+  Mail,
+  Phone,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import ReactCrop, { centerCrop, makeAspectCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import imageCompression from "browser-image-compression";
 import { motion, AnimatePresence } from "framer-motion";
-import { rates } from "@/app/data/rates";
+import { cities } from "../../data/rates"; // ✅ NEW: Cities array
+import { services } from "../../data/rates"; // ✅ NEW: Services array
+import { rates } from "../../data/rates"; // ✅ NEW: Rates with new structure
 
 export default function ProfileDetails() {
   const { data: session } = useSession();
@@ -49,11 +53,11 @@ export default function ProfileDetails() {
   const idImgRef = useRef(null);
 
   // Helper: enrich data
-  const enrichProfileData = (userData) => {
-    const cityData = rates.find((r) => r.name === userData.city);
+  const enrichProfileData = useCallback((userData) => {
+    const cityData = rates.find((r) => r.city === userData.city);
     
     const skillsWithRates = userData.skills?.map((skillName) => {
-      const skillRate = cityData?.prices[skillName] || 0;
+      const skillRate = cityData?.services[skillName] || 0;
       return {
         name: skillName,
         rate: skillRate,
@@ -66,6 +70,9 @@ export default function ProfileDetails() {
       bio: userData.bio || "",
       profileImage: userData.profileImage || "/d_avatar.png",
       identityVerification: userData.identityVerification || {},
+      // Add email and contact number
+      email: userData.email || "",
+      contactNumber: userData.contactNumber || "",
       // Add availability timing with defaults
       availabilityTiming: userData.availabilityTiming || {
         startWork: "today",
@@ -79,7 +86,7 @@ export default function ProfileDetails() {
         totalHoursPerWeek: 40
       }
     };
-  };
+  }, []);
 
   // Load profile
   useEffect(() => {
@@ -105,25 +112,45 @@ export default function ProfileDetails() {
       }
     }
     if (session?.user?.id) loadProfile();
-  }, [session]);
+  }, [session, enrichProfileData]);
 
-  // Handle city/skills
+  // Update available skills when city changes
   useEffect(() => {
     if (selectedCity) {
-      const cityData = rates.find((r) => r.name === selectedCity);
+      // Get city data from rates
+      const cityData = rates.find((r) => r.city === selectedCity);
+      
+      // Get user's current skills
+      const userSkillNames = profile?.skills.map((s) => s.name) || [];
+      
       if (cityData) {
-        const userSkillNames = profile?.skills.map((s) => s.name) || [];
-        const skills = Object.keys(cityData.prices).filter(
+        // Show services that have rates in this city AND user hasn't added yet
+        const availableInCity = Object.keys(cityData.services);
+        const skills = availableInCity.filter(
           (s) => !userSkillNames.includes(s)
         );
         setAvailableSkills(skills);
-        setCurrentRate(selectedSkill ? cityData.prices[selectedSkill] : null);
         
         // Update existing skills rates when city changes
         if (profile && profile.skills.length > 0) {
           const updatedSkills = profile.skills.map(skill => ({
             ...skill,
-            rate: cityData.prices[skill.name] || 0
+            rate: cityData.services[skill.name] || 0
+          }));
+          setProfile(prev => ({ ...prev, skills: updatedSkills }));
+        }
+      } else {
+        // If city not in rates, show all services (with rate 0)
+        const skills = services.filter(
+          (s) => !userSkillNames.includes(s)
+        );
+        setAvailableSkills(skills);
+        
+        // Update existing skills rates to 0
+        if (profile && profile.skills.length > 0) {
+          const updatedSkills = profile.skills.map(skill => ({
+            ...skill,
+            rate: 0
           }));
           setProfile(prev => ({ ...prev, skills: updatedSkills }));
         }
@@ -133,10 +160,25 @@ export default function ProfileDetails() {
       setCurrentRate(null);
     }
 
+    // Update profile city
     if (profile && profile.city !== selectedCity) {
       setProfile((prev) => ({ ...prev, city: selectedCity }));
     }
-  }, [selectedCity, selectedSkill, profile]);
+  }, [selectedCity, profile]);
+
+  // Update rate when skill is selected
+  useEffect(() => {
+    if (selectedCity && selectedSkill) {
+      const cityData = rates.find((r) => r.city === selectedCity);
+      if (cityData && cityData.services[selectedSkill]) {
+        setCurrentRate(cityData.services[selectedSkill]);
+      } else {
+        setCurrentRate(0);
+      }
+    } else {
+      setCurrentRate(null);
+    }
+  }, [selectedSkill, selectedCity]);
 
   // Profile Picture Crop Logic
   const onSelectFile = (e) => {
@@ -221,39 +263,35 @@ export default function ProfileDetails() {
     }
   };
 
-  // Save function - Manual save only
+  // Save function with proper city handling
   const handleSaveChanges = async () => {
     try {
       setLoading(true);
       
-      // Debug: Check current profile state
-      console.log("🔍 FRONTEND - Current profile:", {
-        skills: profile.skills,
-        skillsLength: profile.skills?.length,
-        city: selectedCity,
-        availabilityTiming: profile.availabilityTiming,
-        workingHours: profile.workingHours
+      console.log("🔍 FRONTEND - Saving profile:", {
+        profileCity: profile?.city,
+        selectedCity: selectedCity,
+        skills: profile?.skills,
+        email: profile?.email,
+        contactNumber: profile?.contactNumber,
+        availabilityTiming: profile?.availabilityTiming,
+        workingHours: profile?.workingHours
       });
       
-      // Prepare payload - Ensure skills are sent as strings
+      // Prepare payload
       const payload = {
         ...profile,
-        skills: profile.skills.map((s) => s.name), // Convert to string array
-        city: selectedCity,
+        skills: profile.skills.map((s) => s.name),
+        city: profile.city,
+        email: profile.email,
+        contactNumber: profile.contactNumber,
         profileImage: profile.profileImage,
         identityVerification: profile.identityVerification,
         availabilityTiming: profile.availabilityTiming,
         workingHours: profile.workingHours,
       };
 
-      console.log("🔍 FRONTEND - Sending payload:", {
-        skills: payload.skills,
-        skillsLength: payload.skills?.length,
-        city: payload.city,
-        identityVerification: payload.identityVerification,
-        availabilityTiming: payload.availabilityTiming,
-        workingHours: payload.workingHours
-      });
+      console.log("🔍 FRONTEND - Sending payload:", payload);
 
       const res = await fetch("/api/dashboard/update", {
         method: "PUT",
@@ -265,12 +303,13 @@ export default function ProfileDetails() {
       console.log("🔍 FRONTEND - API Response:", responseData);
 
       if (!res.ok) {
-        throw new Error('Failed to update profile');
+        throw new Error(responseData.error || 'Failed to update profile');
       }
 
       const enriched = enrichProfileData(responseData.user);
       setProfile(enriched);
       setOriginalProfile(enriched);
+      setSelectedCity(responseData.user.city || "");
       setIsEditing(false);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 2500);
@@ -294,7 +333,14 @@ export default function ProfileDetails() {
   };
 
   const handleAddSkill = () => {
-    if (!selectedSkill || currentRate === null) return;
+    if (!selectedSkill || !selectedCity || currentRate === null) return;
+    
+    // Check if skill already exists
+    if (profile.skills?.some(s => s.name === selectedSkill)) {
+      alert('This skill is already added');
+      return;
+    }
+    
     const newSkill = { name: selectedSkill, rate: currentRate };
     setProfile((prev) => ({
       ...prev,
@@ -373,6 +419,13 @@ export default function ProfileDetails() {
       }));
     }
   }, [profile?.workingHours?.hoursPerDay, profile?.workingHours?.daysPerWeek]);
+
+  // City dropdown handler
+  const handleCityChange = (e) => {
+    const newCity = e.target.value;
+    console.log("🏙️ City changed to:", newCity);
+    setSelectedCity(newCity);
+  };
 
   const totalHourlyRate =
     profile?.skills.reduce((sum, s) => sum + (s.rate || 0), 0) || 0;
@@ -493,7 +546,56 @@ export default function ProfileDetails() {
         )}
       </div>
 
-      {/* ✅ Bio Section - NEWLY ADDED */}
+      {/* ✅ Personal Information Section */}
+      <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+        <h3 className="text-lg font-semibold text-slate-700 mb-4">Personal Information</h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Email Field */}
+          <div>
+            <label className="block text-sm font-medium text-slate-600 mb-2">
+              <Mail size={16} className="inline mr-2" />
+              Email Address
+            </label>
+            {isEditing ? (
+              <input
+                type="email"
+                value={profile.email || ""}
+                onChange={(e) => setProfile(prev => ({ ...prev, email: e.target.value }))}
+                placeholder="Enter your email"
+                className="w-full border border-slate-200 rounded-md p-2"
+              />
+            ) : (
+              <div className="text-slate-700 p-2 bg-slate-50 rounded-md">
+                {profile.email || "No email provided"}
+              </div>
+            )}
+          </div>
+
+          {/* Contact Number Field */}
+          <div>
+            <label className="block text-sm font-medium text-slate-600 mb-2">
+              <Phone size={16} className="inline mr-2" />
+              Contact Number
+            </label>
+            {isEditing ? (
+              <input
+                type="tel"
+                value={profile.contactNumber || ""}
+                onChange={(e) => setProfile(prev => ({ ...prev, contactNumber: e.target.value }))}
+                placeholder="Enter your phone number"
+                className="w-full border border-slate-200 rounded-md p-2"
+              />
+            ) : (
+              <div className="text-slate-700 p-2 bg-slate-50 rounded-md">
+                {profile.contactNumber || "No contact number provided"}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* ✅ Bio Section */}
       <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
         <h3 className="text-lg font-semibold text-slate-700 mb-4">Bio</h3>
         {isEditing ? (
@@ -511,6 +613,49 @@ export default function ProfileDetails() {
             )}
           </div>
         )}
+      </div>
+
+      {/* ✅ City Selection Section */}
+      <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+        <h3 className="text-lg font-semibold text-slate-700 mb-4">Location</h3>
+        
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-slate-600 mb-2">
+            Select Your City
+          </label>
+          {isEditing ? (
+            <select
+              value={selectedCity}
+              onChange={handleCityChange}
+              className="w-full border border-slate-200 rounded-md p-2"
+            >
+              <option value="">-- Select Your City --</option>
+              {cities.map((city) => (  // ✅ Using cities array
+                <option key={city} value={city}>
+                  {city}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <div className="flex items-center gap-2 text-slate-700 p-2 bg-slate-50 rounded-md">
+              <span className="font-medium">
+                {profile.city || "No city selected"}
+              </span>
+            </div>
+          )}
+        </div>
+
+        <div className="text-sm text-slate-600">
+          <p>
+            <span className="font-medium">Note:</span> Your selected city determines the available skills and their rates. 
+            You can change your city anytime, and your skill rates will be updated automatically.
+          </p>
+          {isEditing && selectedCity && !rates.find(r => r.city === selectedCity) && (
+            <p className="text-amber-600 mt-2">
+              ⚠️ No rates defined for {selectedCity}. Skills will show $0/hr rate.
+            </p>
+          )}
+        </div>
       </div>
 
       {/* ✅ ID Upload Section */}
@@ -822,65 +967,59 @@ export default function ProfileDetails() {
           )}
         </div>
 
-        {isEditing && (
+        {isEditing && selectedCity && (
           <div className="mt-6 space-y-4 pt-4 border-t border-slate-200">
             <div>
               <label className="block text-sm font-medium text-slate-600 mb-1">
-                Select your city
+                Select a skill to add
               </label>
               <select
-                value={selectedCity}
-                onChange={(e) => {
-                  setSelectedCity(e.target.value);
-                  setSelectedSkill("");
-                }}
+                value={selectedSkill}
+                onChange={(e) => setSelectedSkill(e.target.value)}
                 className="w-full border border-slate-200 rounded-md p-2"
               >
-                <option value="">-- Select a City --</option>
-                {rates.map((city) => (
-                  <option key={city.name} value={city.name}>
-                    {city.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {selectedCity && (
-              <>
-                <label className="block text-sm font-medium text-slate-600 mb-1">
-                  Select a skill to add
-                </label>
-                <select
-                  value={selectedSkill}
-                  onChange={(e) => setSelectedSkill(e.target.value)}
-                  className="w-full border border-slate-200 rounded-md p-2"
-                >
-                  <option value="">-- Select a Skill --</option>
-                  {availableSkills.map((skill) => (
+                <option value="">-- Select a Skill --</option>
+                {availableSkills.map((skill) => {
+                  const cityData = rates.find(r => r.city === selectedCity);
+                  const rate = cityData?.services[skill] || 0;
+                  return (
                     <option key={skill} value={skill}>
-                      {skill} - ${rates.find(r => r.name === selectedCity)?.prices[skill] || 0}/hr
+                      {skill} - ${rate}/hr
                     </option>
-                  ))}
-                </select>
+                  );
+                })}
+              </select>
 
-                {selectedSkill && currentRate !== null && (
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-slate-50 p-3 rounded-md border border-slate-200 mt-2 gap-3">
-                    <p className="text-sm font-medium text-slate-700">
-                      Suggested Rate:{" "}
-                      <span className="text-lg font-bold text-slate-900">
-                        ${currentRate}/hr
+              {selectedSkill && currentRate !== null && (
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-slate-50 p-3 rounded-md border border-slate-200 mt-2 gap-3">
+                  <p className="text-sm font-medium text-slate-700">
+                    {selectedCity} Rate:{" "}
+                    <span className="text-lg font-bold text-slate-900">
+                      ${currentRate}/hr
+                    </span>
+                    {currentRate === 0 && (
+                      <span className="text-amber-600 text-xs ml-2">
+                        (Rate not defined for {selectedCity})
                       </span>
-                    </p>
-                    <button
-                      onClick={handleAddSkill}
-                      className="flex items-center justify-center gap-2 px-4 py-2 text-sm bg-slate-800 text-white rounded-md hover:bg-slate-900 w-full sm:w-auto"
-                    >
-                      <PlusCircle size={16} /> Add Skill
-                    </button>
-                  </div>
-                )}
-              </>
-            )}
+                    )}
+                  </p>
+                  <button
+                    onClick={handleAddSkill}
+                    className="flex items-center justify-center gap-2 px-4 py-2 text-sm bg-slate-800 text-white rounded-md hover:bg-slate-900 w-full sm:w-auto"
+                  >
+                    <PlusCircle size={16} /> Add Skill
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {isEditing && !selectedCity && (
+          <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+            <p className="text-sm text-yellow-700">
+              <strong>Note:</strong> Please select a city first to see available skills and their rates.
+            </p>
           </div>
         )}
       </div>

@@ -5,9 +5,9 @@ import { PlusIcon, MinusIcon } from "@heroicons/react/24/outline";
 export default function FAQAccordion() {
   const faqs = [
     {
-      question: "What is TaskRabbit?",
+      question: "What is GoZipply?",
       answer:
-        "TaskRabbit is a platform that connects people with local freelancers to help with everyday tasks like cleaning, moving, delivery, and handyman services.",
+        "GoZipply is a platform that connects people with local freelancers to help with everyday tasks like cleaning, moving, delivery, and handyman services.",
     },
     {
       question: "How do I become a Tasker?",

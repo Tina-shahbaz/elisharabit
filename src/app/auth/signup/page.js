@@ -13,12 +13,11 @@ export default function SignupForm() {
     setValue,
     formState: { errors },
   } = useForm({
-    defaultValues: { countryCode: 'US' },
+    defaultValues: { countryCode: 'US', fullAddress: '' },
   });
 
   const [apiError, setApiError] = useState('');
   const [submitting, setSubmitting] = useState(false);
-
   const [step, setStep] = useState('signup');
   const [userEmail, setUserEmail] = useState('');
 
@@ -35,16 +34,19 @@ export default function SignupForm() {
     { name: 'UAE', code: 'AE', dialCode: '+971', min: 9, max: 9 },
   ];
 
+  const [open, setOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // Location state for coordinates
+  const [coordinates, setCoordinates] = useState([0, 0]);
+
   useEffect(() => {
     register('countryCode', { required: true });
-    setValue('countryCode', 'US', { shouldValidate: false, shouldDirty: false });
+    setValue('countryCode', 'US');
   }, [register, setValue]);
 
   const countryCode = watch('countryCode') || 'US';
   const selectedCountry = countries.find((c) => c.code === countryCode) || countries[0];
-
-  const [open, setOpen] = useState(false);
-  const dropdownRef = useRef(null);
 
   useEffect(() => {
     function onDocClick(e) {
@@ -60,9 +62,25 @@ export default function SignupForm() {
     e.target.value = cleaned;
   };
 
+  // Location change handler
+  const handleLocationChange = (e) => {
+    const value = e.target.value;
+    setValue('fullAddress', value, { shouldValidate: true, shouldDirty: true });
+    setValue('city', value.split(',')[0] || '', { shouldValidate: true });
+    setCoordinates([74.3587, 31.5204]); // dummy coordinates, replace with real API if needed
+  };
+
   const onSubmit = async (data) => {
     setApiError('');
     setSubmitting(true);
+
+    data.location = {
+      type: 'Point',
+      coordinates: coordinates,
+    };
+
+    data.fullAddress = data.fullAddress || '';
+    data.city = data.city || (data.fullAddress ? data.fullAddress.split(',')[0] : '');
 
     try {
       const res = await fetch('/api/signup', {
@@ -83,7 +101,6 @@ export default function SignupForm() {
         return;
       }
 
-      // ✅ Store email and switch to OTP screen
       setUserEmail(data.email);
       setStep('verify');
     } catch (err) {
@@ -108,19 +125,14 @@ export default function SignupForm() {
 
   return (
     <>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-2 min-w-[80%] pt-5"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2 min-w-[80%] pt-5">
         <input
           {...register('firstName', { required: "Can't be blank." })}
           className="border rounded p-2 w-full"
           placeholder="First Name"
           type="text"
         />
-        {errors.firstName && (
-          <p className="text-red-500 text-md">{errors.firstName.message}</p>
-        )}
+        {errors.firstName && <p className="text-red-500 text-md">{errors.firstName.message}</p>}
 
         <input
           {...register('lastName', { required: "Can't be blank." })}
@@ -128,9 +140,7 @@ export default function SignupForm() {
           placeholder="Last Name"
           type="text"
         />
-        {errors.lastName && (
-          <p className="text-red-500 text-md">{errors.lastName.message}</p>
-        )}
+        {errors.lastName && <p className="text-red-500 text-md">{errors.lastName.message}</p>}
 
         <input
           {...register('email', { required: "Can't be blank." })}
@@ -138,10 +148,9 @@ export default function SignupForm() {
           placeholder="Email"
           type="email"
         />
-        {errors.email && (
-          <p className="text-red-500 text-md">{errors.email.message}</p>
-        )}
+        {errors.email && <p className="text-red-500 text-md">{errors.email.message}</p>}
 
+        {/* Phone */}
         <div className="flex gap-3 items-stretch">
           <div ref={dropdownRef} className="relative">
             <button
@@ -156,13 +165,6 @@ export default function SignupForm() {
                 className="w-6 h-4 object-cover"
               />
               <span className="font-medium">{selectedCountry.dialCode}</span>
-              <svg
-                className="w-4 h-4 ml-1 text-gray-500"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path d="M5.23 7.21a.75.75 0 011.06.02L10 11.127l3.71-3.896a.75.75 0 111.08 1.04l-4.24 4.46a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z" />
-              </svg>
             </button>
 
             {open && (
@@ -171,15 +173,10 @@ export default function SignupForm() {
                   <li
                     key={c.code}
                     onClick={() => {
-                      setValue('countryCode', c.code, {
-                        shouldDirty: true,
-                        shouldValidate: true,
-                      });
+                      setValue('countryCode', c.code, { shouldDirty: true, shouldValidate: true });
                       setOpen(false);
                     }}
                     className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 cursor-pointer"
-                    role="option"
-                    aria-selected={c.code === countryCode}
                   >
                     <img
                       src={`https://flagsapi.com/${c.code}/flat/32.png`}
@@ -187,9 +184,7 @@ export default function SignupForm() {
                       className="w-6 h-4 object-cover"
                     />
                     <span className="flex-1 text-sm">{c.name}</span>
-                    <span className="text-sm text-gray-600">
-                      {c.dialCode}
-                    </span>
+                    <span className="text-sm text-gray-600">{c.dialCode}</span>
                   </li>
                 ))}
               </ul>
@@ -203,15 +198,9 @@ export default function SignupForm() {
                 setValueAs: (v) => (v || '').replace(/\D/g, ''),
                 pattern: { value: /^\d+$/, message: 'Digits only' },
                 validate: (val) => {
-                  const c =
-                    countries.find(
-                      (x) => x.code === (countryCode || 'US')
-                    ) || countries[0];
+                  const c = countries.find((x) => x.code === countryCode) || countries[0];
                   const len = (val || '').length;
-                  return (
-                    (len >= c.min && len <= c.max) ||
-                    `Phone number is not valid.`
-                  );
+                  return len >= c.min && len <= c.max ? true : 'Phone number is not valid.';
                 },
               })}
               onInput={onPhoneInput}
@@ -222,22 +211,14 @@ export default function SignupForm() {
             />
           </div>
         </div>
-        {errors.phone && (
-          <p className="text-red-500 text-md text-start">
-            {errors.phone.message}
-          </p>
-        )}
+        {errors.phone && <p className="text-red-500 text-md">{errors.phone.message}</p>}
 
         <input
           {...register('password', {
             required: "Password can't be blank.",
-            minLength: {
-              value: 8,
-              message: 'Password must be at least 8 characters long',
-            },
+            minLength: { value: 8, message: 'Password must be at least 8 characters long' },
             pattern: {
-              value:
-                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
+              value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
               message: 'Password must be strong.',
             },
           })}
@@ -245,25 +226,18 @@ export default function SignupForm() {
           placeholder="Password"
           type="password"
         />
-        {errors.password && (
-          <p className="text-red-500 text-sm">{errors.password.message}</p>
-        )}
+        {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
 
         <input
           {...register('confirmPassword', {
             required: "Can't be blank.",
-            validate: (v) =>
-              v === (watch('password') || '') || 'Passwords do not match',
+            validate: (v) => v === watch('password') || 'Passwords do not match',
           })}
           className="border rounded p-2 w-full"
           placeholder="Confirm Password"
           type="password"
         />
-        {errors.confirmPassword && (
-          <p className="text-red-500 text-md">
-            {errors.confirmPassword.message}
-          </p>
-        )}
+        {errors.confirmPassword && <p className="text-red-500 text-md">{errors.confirmPassword.message}</p>}
 
         <input
           {...register('zipCode', {
@@ -275,14 +249,23 @@ export default function SignupForm() {
           placeholder="Zip Code"
           type="text"
         />
-        {errors.zipCode && (
-          <p className="text-red-500 text-md">{errors.zipCode.message}</p>
-        )}
+        {errors.zipCode && <p className="text-red-500 text-md">{errors.zipCode.message}</p>}
+
+        {/* Full Address */}
+        <input
+          {...register('fullAddress', { required: "Can't be blank." })}
+          value={watch('fullAddress') || ''}
+          onChange={handleLocationChange}
+          className="border rounded p-2 w-full"
+          placeholder="City / Location"
+          type="text"
+        />
+        {errors.fullAddress && <p className="text-red-500 text-md">{errors.fullAddress.message}</p>}
 
         <button
           type="submit"
           disabled={submitting}
-          className="mt-2 rounded-full th-bg-black  bg-black text-white py-2 cursor-pointer transition disabled:opacity-60"
+          className="mt-2 rounded-full bg-black text-white py-2 cursor-pointer transition disabled:opacity-60"
         >
           {submitting ? 'Creating...' : 'Sign Up'}
         </button>
@@ -291,15 +274,9 @@ export default function SignupForm() {
       </form>
 
       <p className="text-xs px-3 text-gray-600 mt-3 text-center">
-        By clicking below and creating an account, I agree to TaskRabbit’s{' '}
-        <Link href="#" className="underline cursor-pointer">
-          Terms of Service
-        </Link>{' '}
-        and{' '}
-        <Link href="#" className="underline cursor-pointer">
-          Privacy Policy
-        </Link>
-        .
+        By clicking below and creating an account, I agree to GoZipply{' '}
+        <Link href="#" className="underline cursor-pointer">Terms of Service</Link> and{' '}
+        <Link href="#" className="underline cursor-pointer">Privacy Policy</Link>.
       </p>
     </>
   );

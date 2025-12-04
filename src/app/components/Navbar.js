@@ -62,7 +62,7 @@ export default function Navbar() {
                 <Link href="/auth" className="text-sm font-medium text-slate-700 hover:text-slate-900">
                   Log in
                 </Link>
-                <Link href="/become-tasker" className={btnPrimary}>
+                <Link href="/auth/signup" className={btnPrimary}>
                   Market yourself
                 </Link>
                 

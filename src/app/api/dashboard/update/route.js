@@ -9,7 +9,7 @@ import { rates } from "@/app/data/rates";
 export async function PUT(req) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user) {
+    if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -17,13 +17,15 @@ export async function PUT(req) {
 
     const body = await req.json();
     console.log("🔍 DEBUG - Received update data:", { 
+      userId: session.user.id,
       skills: body.skills,
-      skillsType: typeof body.skills,
-      skillsLength: body.skills?.length,
       city: body.city,
-      identityVerification: body.identityVerification,
+      email: body.email,
+      contactNumber: body.contactNumber,
       availabilityTiming: body.availabilityTiming,
-      workingHours: body.workingHours // NEW: Log working hours
+      workingHours: body.workingHours,
+      identityVerification: body.identityVerification,
+      bio: body.bio
     });
 
     const user = await User.findById(session.user.id);
@@ -34,8 +36,11 @@ export async function PUT(req) {
     console.log("🔍 DEBUG - User before update:", {
       currentSkills: user.skills,
       currentCity: user.city,
+      currentEmail: user.email,
+      currentPhone: user.phone,
+      currentCountryCode: user.countryCode,
       currentAvailabilityTiming: user.availabilityTiming,
-      currentWorkingHours: user.workingHours // NEW
+      currentWorkingHours: user.workingHours
     });
 
     // --- 🔐 Password Update ---
@@ -79,21 +84,20 @@ export async function PUT(req) {
       user.twoFA = body.twoFA;
     }
 
-    // --- 📝 Profile Updates ---
+    // --- 📝 Profile Updates - UPDATED WITH ALL NEW FIELDS ---
     const editableFields = [
       "firstName",
       "lastName",
       "username",
-      "phone",
       "profileImage",
       "city",
-      "category",
       "bio",
       "availability",
       "identityVerification",
-      // Add availabilityTiming and workingHours to editable fields
+      "fullAddress",
       "availabilityTiming",
-      "workingHours" // NEW
+      "workingHours",
+      "zipCode"
     ];
 
     for (const field of editableFields) {
@@ -103,18 +107,79 @@ export async function PUT(req) {
       }
     }
 
-    // ✅ FIXED: Skills ko alag se handle karein
+    // --- 📧 Email Update (with validation) ---
+    if (body.email && body.email !== user.email) {
+      // Email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(body.email)) {
+        return NextResponse.json(
+          { error: "Invalid email format." },
+          { status: 400 }
+        );
+      }
+
+      // Check if email already exists
+      const existingEmail = await User.findOne({ 
+        email: body.email.toLowerCase(),
+        _id: { $ne: session.user.id }
+      });
+      
+      if (existingEmail) {
+        return NextResponse.json(
+          { error: "Email already in use by another account." },
+          { status: 400 }
+        );
+      }
+      
+      user.email = body.email.toLowerCase();
+      console.log("✅ Updated email:", user.email);
+    }
+
+    // --- 📱 Contact Number Update (with parsing) ---
+    if (body.contactNumber) {
+      // Remove any non-digit characters
+      const cleanedNumber = body.contactNumber.replace(/\D/g, '');
+      
+      if (cleanedNumber.length < 10) {
+        return NextResponse.json(
+          { error: "Invalid phone number. Must be at least 10 digits." },
+          { status: 400 }
+        );
+      }
+      
+      // Extract country code (assume first 1-3 digits) and phone number
+      let countryCode = "1"; // Default for US/Canada
+      let phoneNumber = cleanedNumber;
+      
+      if (cleanedNumber.length > 10) {
+        // Try to extract country code
+        countryCode = cleanedNumber.substring(0, cleanedNumber.length - 10);
+        phoneNumber = cleanedNumber.substring(countryCode.length);
+      }
+      
+      user.countryCode = `+${countryCode}`;
+      user.phone = phoneNumber;
+      console.log("✅ Updated contact:", { 
+        countryCode: user.countryCode, 
+        phone: user.phone,
+        fullContact: `${user.countryCode}${user.phone}`
+      });
+    }
+
+    // --- 🛠️ Skills Update ---
     if (body.skills !== undefined) {
       if (Array.isArray(body.skills)) {
-        // Skills ko normalize karein - strings mein convert karein
-        const normalizedSkills = body.skills.map(skill => {
-          if (typeof skill === 'string') {
-            return skill;
-          } else if (skill && typeof skill === 'object' && skill.name) {
-            return skill.name;
-          }
-          return skill;
-        }).filter(skill => skill); // Remove any empty values
+        // Normalize skills to strings
+        const normalizedSkills = body.skills
+          .map(skill => {
+            if (typeof skill === 'string') {
+              return skill.trim();
+            } else if (skill && typeof skill === 'object' && skill.name) {
+              return skill.name.trim();
+            }
+            return null;
+          })
+          .filter(skill => skill && skill.length > 0); // Remove empty values
         
         user.skills = normalizedSkills;
         console.log("✅ Normalized skills:", normalizedSkills);
@@ -125,7 +190,10 @@ export async function PUT(req) {
 
     // --- 🧠 Username Uniqueness Check ---
     if (body.username && body.username !== user.username) {
-      const existingUser = await User.findOne({ username: body.username });
+      const existingUser = await User.findOne({ 
+        username: body.username.toLowerCase(),
+        _id: { $ne: session.user.id }
+      });
       if (existingUser) {
         return NextResponse.json(
           { error: "Username already taken." },
@@ -135,7 +203,7 @@ export async function PUT(req) {
       user.username = body.username.toLowerCase();
     }
 
-    // --- 💰 Auto-calculate hourlyRate --- FIXED
+    // --- 💰 Auto-calculate hourlyRate ---
     if (user.city && Array.isArray(user.skills) && user.skills.length > 0) {
       const cityData = rates.find((r) => r.name === user.city);
       if (cityData) {
@@ -143,10 +211,10 @@ export async function PUT(req) {
         const skillNames = [];
 
         for (const skill of user.skills) {
-          const skillName = typeof skill === "string" ? skill : skill?.name;
-          if (skillName) {
+          const skillName = skill;
+          if (skillName && cityData.prices[skillName]) {
             skillNames.push(skillName);
-            total += cityData.prices[skillName] || 0;
+            total += cityData.prices[skillName];
           }
         }
 
@@ -168,29 +236,32 @@ export async function PUT(req) {
       user.hourlyRate = 0;
     }
 
-    // --- 🕐 NEW: Validate availabilityTiming structure ---
+    // --- 🕐 Validate availabilityTiming structure ---
     if (body.availabilityTiming) {
-      // Ensure proper structure with defaults
       user.availabilityTiming = {
-        startWork: body.availabilityTiming.startWork || "today",
-        preferredTime: Array.isArray(body.availabilityTiming.preferredTime) 
-          ? body.availabilityTiming.preferredTime 
+        startWork: ["today", "tomorrow", "in_one_week"].includes(body.availabilityTiming.startWork)
+          ? body.availabilityTiming.startWork
+          : "today",
+        preferredTime: Array.isArray(body.availabilityTiming.preferredTime)
+          ? body.availabilityTiming.preferredTime.filter(time => 
+              ["morning", "afternoon", "evening"].includes(time)
+            )
           : ["morning", "afternoon", "evening"],
         availableDays: Array.isArray(body.availabilityTiming.availableDays)
-          ? body.availabilityTiming.availableDays
+          ? body.availabilityTiming.availableDays.filter(day => 
+              ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"].includes(day)
+            )
           : ["monday", "tuesday", "wednesday", "thursday", "friday"]
       };
       console.log("✅ Updated availabilityTiming:", user.availabilityTiming);
     }
 
-    // --- ⏰ NEW: Validate workingHours structure ---
+    // --- ⏰ Validate workingHours structure ---
     if (body.workingHours) {
-      // Calculate total hours per week if not provided
-      const hoursPerDay = body.workingHours.hoursPerDay || 8;
-      const daysPerWeek = body.workingHours.daysPerWeek || 5;
+      const hoursPerDay = Math.min(Math.max(parseInt(body.workingHours.hoursPerDay) || 8, 1), 24);
+      const daysPerWeek = Math.min(Math.max(parseInt(body.workingHours.daysPerWeek) || 5, 1), 7);
       const totalHoursPerWeek = hoursPerDay * daysPerWeek;
 
-      // Ensure proper structure with defaults
       user.workingHours = {
         hoursPerDay: hoursPerDay,
         daysPerWeek: daysPerWeek,
@@ -199,20 +270,60 @@ export async function PUT(req) {
       console.log("✅ Updated workingHours:", user.workingHours);
     }
 
+    // Update timestamps
+    user.updatedAt = new Date();
+
     await user.save();
 
     console.log("✅ User after save:", { 
+      id: user._id,
       skills: user.skills,
       skillsLength: user.skills?.length,
       hourlyRate: user.hourlyRate,
       city: user.city,
+      email: user.email,
+      contact: `${user.countryCode}${user.phone}`,
       availabilityTiming: user.availabilityTiming,
-      workingHours: user.workingHours // NEW
+      workingHours: user.workingHours
     });
 
-    return NextResponse.json({ success: true, user });
+    // Prepare response user object
+    const responseUser = {
+      id: user._id.toString(),
+      name: `${user.firstName} ${user.lastName}`,
+      email: user.email,
+      contactNumber: `${user.countryCode}${user.phone}`,
+      city: user.city,
+      skills: user.skills,
+      bio: user.bio,
+      profileImage: user.profileImage || '/d_avatar.png',
+      identityVerification: user.identityVerification || {},
+      availabilityTiming: user.availabilityTiming || {
+        startWork: "today",
+        preferredTime: ["morning", "afternoon", "evening"],
+        availableDays: ["monday", "tuesday", "wednesday", "thursday", "friday"]
+      },
+      workingHours: user.workingHours || {
+        hoursPerDay: 8,
+        daysPerWeek: 5,
+        totalHoursPerWeek: 40
+      },
+      hourlyRate: user.hourlyRate,
+      fullAddress: user.fullAddress,
+      availability: user.availability,
+      username: user.username,
+      role: user.role
+    };
+
+    return NextResponse.json({ 
+      success: true, 
+      user: responseUser 
+    });
+    
   } catch (err) {
     console.error("❌ Update user error:", err);
-    return NextResponse.json({ error: "Update failed" }, { status: 500 });
+    return NextResponse.json({ 
+      error: "Update failed. Please try again." 
+    }, { status: 500 });
   }
 }

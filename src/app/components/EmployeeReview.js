@@ -7,7 +7,7 @@ export default function EmployeeReview() {
       name: "Sarah Johnson",
       role: "Tasker",
       comment:
-        "TaskRabbit has completely transformed the way I work. I can choose my tasks, set my schedule, and earn money on my own terms. It's reliable and easy to use!",
+        "GoZipply has completely transformed the way I work. I can choose my tasks, set my schedule, and earn money on my own terms. It's reliable and easy to use!",
       img: "/employee1.jpg", // employee image path
     },
     {

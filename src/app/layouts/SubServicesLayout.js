@@ -30,7 +30,7 @@ const SubServiceLayout = ({ subService, parent }) => {
       icon: <FaCheckCircle size={40} className="text-black mb-2" />,
       title: "Get It Done!",
       description:
-        "Your Tasker arrives and gets the job done. Pay securely and leave a review, all through Taskrabbit.",
+        "Your Tasker arrives and gets the job done. Pay securely and leave a review, all through GoZipply.",
     },
   ];
 
@@ -65,7 +65,7 @@ const SubServiceLayout = ({ subService, parent }) => {
             </p>
             <Link href={`${subService.href}/book`}>
               <button className="mt-auto px-6 py-2 w-max bg-white text-black font-semibold border border-black rounded-lg hover:bg-black hover:text-white transition-all duration-300">
-                Book Now
+                View Now
               </button>
             </Link>
           </motion.div>

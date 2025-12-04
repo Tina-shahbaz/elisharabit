@@ -29,7 +29,7 @@ export default function Features() {
         Flexible work, at your fingertips
       </h2>
       <p className="text-center text-gray-600 max-w-2xl mx-auto mb-12">
-        Find local jobs that fit your skills and schedule. With TaskRabbit, you have the freedom and support to be your own boss.
+        Find local jobs that fit your skills and schedule. With GoZipply, you have the freedom and support to be your own boss.
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

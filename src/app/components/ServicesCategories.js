@@ -57,7 +57,7 @@ const ServicesCategories = () => {
             BRIT+CO
           </h3>
           <p className="text-gray-600 text-lg text-center italic transition-transform duration-300 hover:scale-105">
-            “Taskrabbit is arguably the best thing to come out of the modern-day
+            GoZipply is arguably the best thing to come out of the modern-day
             tech revolution. Hiring a Tasker can really help make every facet of your
             life a breeze.”
           </p>
@@ -68,7 +68,7 @@ const ServicesCategories = () => {
             The New York Times
           </h3>
           <p className="text-gray-600 text-lg text-center italic transition-transform duration-300 hover:scale-105">
-            “Taskrabbit, a company known for, among other things, sending
+            GoZipply, a company known for, among other things, sending
             tool-wielding workers to rescue customers befuddled by
             build-it-yourself furniture kits.”
           </p>

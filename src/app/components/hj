@@ -384,7 +384,7 @@
 #       <div className="bg-white  rounded-2xl flex-col items-center flex justify-center p-10">
 #         <h3 className="text-2xl font-bold text-gray-800 mb-10">The New York Times</h3>
 #         <p className="text-gray-600 text-lg text-center italic">
-#           “Taskrabbit, a company known for, among other things, sending tool-wielding
+#           “, a company known for, among other things, sending tool-wielding
 #           workers to rescue customers befuddled by build-it-yourself furniture kits.”
 #         </p>
 #       </div>
